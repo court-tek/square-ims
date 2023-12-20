@@ -1,4 +1,15 @@
+//= link_tree ../fonts
 //= link_tree ../images
 //= link_directory ../stylesheets .css
 //= link_tree ../../javascript .js
 //= link_tree ../../../vendor/javascript .js
+//= link jquery-2.2.4.min.js
+//= require modernizr-2.8.3.min.js
+//= require bar-chart
+//= require bootstrap.min
+//= require popper.min
+//= require line-chart
+//= require pie-chart
+//= require owl.carousel.min
+//= require jquery.slimscroll.min
+//= require jquery.slicknav.min
