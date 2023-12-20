@@ -67,3 +67,5 @@ group :test do
 end
 
 gem 'square.rb'
+
+gem 'dotenv-rails'
