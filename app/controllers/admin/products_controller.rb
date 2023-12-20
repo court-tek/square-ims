@@ -10,7 +10,11 @@ class Admin::ProductsController < ApplicationController
 
     private
     def get_square_client
-        access_token = ENV['SQUARE_ACCESS_TOKEN']
+        access_token = ENV.fetch('SQUARE_ACCESS_TOKEN')
+        client = Square::Client.new(
+            access_token: access_token,
+            environment: 'sandbox'
+        )
     end
 
     def retrieve_catalog_objects
