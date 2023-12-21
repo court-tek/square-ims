@@ -1,6 +1,5 @@
 class Admin::ProductsController < ApplicationController
     require 'square'
-    require 'json'
     layout 'admin'
 
     # GET all catalog objects from api
