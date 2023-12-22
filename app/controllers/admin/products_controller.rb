@@ -7,12 +7,23 @@ class Admin::ProductsController < ApplicationController
         @catalog = retrieve_catalog_objects
     end
 
-    # 
+    # the add new product view
     def new
     end
-
+    
+    # add a product to the catalog
     def create
-        @catalog = create_catalog_product(params[:id], params[:name], params[:description], params[:price_amount])
+        @catalog = create_catalog_product(params[:id], params[:name], params[:description], params[:price_amount].to_i)
+
+        respond_to do |format|
+            if @catalog.success?
+                format.html { redirect_to admin_products_path, notice: "Product was successfully created." }
+                #format.json { render :show, status: :created, location: @payment }
+            else
+                format.html { render :new, status: :unprocessable_entity }
+                #format.json { render json: @payment.errors, status: :unprocessable_entity }
+            end
+        end
     end
 
     private
@@ -42,7 +53,7 @@ class Admin::ProductsController < ApplicationController
             client = self.get_square_client
             result = client.catalog.upsert_catalog_object(
                 body: {
-                    idempotency_key: ,
+                    idempotency_key: SecureRandom.uuid(),
                     object: {
                     type: "ITEM",
                     id: "##{id}",
@@ -55,7 +66,7 @@ class Admin::ProductsController < ApplicationController
                             type: "ITEM_VARIATION",
                             id: "#small_coffee",
                             item_variation_data: {
-                            item_id: "#coffee",
+                            item_id: "##{id}",
                             name: "Small",
                             pricing_type: "FIXED_PRICING",
                             price_money: {
@@ -68,7 +79,7 @@ class Admin::ProductsController < ApplicationController
                             type: "ITEM_VARIATION",
                             id: "#large_coffee",
                             item_variation_data: {
-                            item_id: "#coffee",
+                            item_id: "##{id}",
                             name: "Large",
                             pricing_type: "FIXED_PRICING",
                             price_money: {
@@ -83,10 +94,6 @@ class Admin::ProductsController < ApplicationController
                   }
                 )
 
-                if result.success?
-                    puts result.data
-                elsif result.error?
-                    warn result.errors
-                end
+                return result
         end
 end
