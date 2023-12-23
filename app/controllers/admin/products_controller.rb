@@ -7,10 +7,18 @@ class Admin::ProductsController < ApplicationController
         @catalog = retrieve_catalog_objects
     end
 
+    def show
+        @catalog = retrieve_catalog_object(params[:id])
+    end
+
     # the add new product view
     def new
     end
+
+    def edit
+    end
     
+
     # add a product to the catalog
     def create
         @catalog = create_catalog_product(params[:id], params[:name], params[:description], params[:price_amount].to_i)
@@ -70,9 +78,9 @@ class Admin::ProductsController < ApplicationController
                             name: "Small",
                             pricing_type: "FIXED_PRICING",
                             price_money: {
-                                amount: price_amount,
-                                currency: "USD"
-                            }
+                                    amount: price_amount,
+                                    currency: "USD"
+                                }
                             }
                         },
                         {
@@ -95,5 +103,19 @@ class Admin::ProductsController < ApplicationController
                 )
 
                 return result
+        end
+
+        # retrieve a single object
+        def retrieve_catalog_object(object_id)
+            client = self.get_square_client
+            result = client.catalog.retrieve_catalog_object(
+                object_id: object_id,
+            )
+              
+              if result.success?
+                return result.data.object
+              elsif result.error?
+                warn result.errors
+              end
         end
 end

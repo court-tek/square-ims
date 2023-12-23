@@ -33,6 +33,7 @@
                                     <div class="table-responsive">
                                         <table class="dbkit-table">
                                             <tr class="heading-td">
+                                                <td class="mv-icon">Id</td>
                                                 <td class="mv-icon">Name</td>
                                                 <td class="coin-name">Description</td>
                                                 <td class="buy">Styles</td>
@@ -41,7 +42,12 @@
                                             <% @catalog.each do |item| %>
                                                 <tr>
                                                     <td class="mv-icon">
-                                                        <%= item[:item_data][:name] %>
+                                                        <%= item[:id] %>
+                                                    </td>
+                                                    <td class="mv-icon">
+                                                        <%= link_to admin_product_path(item[:id]) do %>
+                                                            <%= item[:item_data][:name] %>
+                                                        <% end %>
                                                     </td>
                                                     <td class="mv-icon">
                                                         <%= item[:item_data][:description].first(10) %>
