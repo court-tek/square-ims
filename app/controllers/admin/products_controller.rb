@@ -18,7 +18,13 @@ class Admin::ProductsController < ApplicationController
     def edit
     end
     
+    def destroy
+        @catalog = delete_catalog_object(params[:id])
 
+        respond_to do |format|
+            format.html { redirect_to admin_products_path, notice: "Menu item was successfully destroyed." }
+        end
+    end
     # add a product to the catalog
     def create
         @catalog = create_catalog_product(params[:id], params[:name], params[:description], params[:price_amount].to_i)
@@ -112,10 +118,23 @@ class Admin::ProductsController < ApplicationController
                 object_id: object_id,
             )
               
-              if result.success?
+            if result.success?
                 return result.data.object
-              elsif result.error?
+            elsif result.error?
                 warn result.errors
-              end
+            end
+        end
+
+        def delete_catalog_object(object_id)
+            client = self.get_square_client
+            result = client.catalog.delete_catalog_object(
+                object_id: object_id
+            )
+
+            if result.success?
+                puts result.data
+            elsif result.error?
+                warn result.errors
+            end
         end
 end

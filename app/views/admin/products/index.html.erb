@@ -28,82 +28,40 @@
                                             <thead class="text-uppercase">
                                                 <tr>
                                                     <th scope="col">id</th>
-                                                    <th scope="col">t</th>
-                                                    <th scope="col">Deadline</th>
-                                                    <th scope="col">Progress</th>
-                                                    <th scope="col">status</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">description</th>
+                                                    <th scope="col">styles</th>
+                                                    <th scope="col">price</th>
+                                                    <th scope="col">created at</th>
                                                     <th scope="col">action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>
-                                                        <div class="progress" style="height: 8px;">
-                                                            <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                    </td>
-                                                    <td><span class="status-p bg-primary">pending</span></td>
-                                                    <td>
-                                                        <ul class="d-flex justify-content-center">
-                                                            <li class="mr-3"><a href="#" class="text-secondary"><i class="fa fa-edit"></i></a></li>
-                                                            <li><a href="#" class="text-danger"><i class="ti-trash"></i></a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Mark</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>
-                                                        <div class="progress" style="height: 8px;">
-                                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 80%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                    </td>
-                                                    <td><span class="status-p bg-warning">pending</span></td>
-                                                    <td>
-                                                        <ul class="d-flex justify-content-center">
-                                                            <li class="mr-3"><a href="#" class="text-secondary"><i class="fa fa-edit"></i></a></li>
-                                                            <li><a href="#" class="text-danger"><i class="ti-trash"></i></a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>Mark</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>
-                                                        <div class="progress" style="height: 8px;">
-                                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                    </td>
-                                                    <td><span class="status-p bg-success">complate</span></td>
-                                                    <td>
-                                                        <ul class="d-flex justify-content-center">
-                                                            <li class="mr-3"><a href="#" class="text-secondary"><i class="fa fa-edit"></i></a></li>
-                                                            <li><a href="#" class="text-danger"><i class="ti-trash"></i></a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">4</th>
-                                                    <td>Mark</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>
-                                                        <div class="progress" style="height: 8px;">
-                                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 85%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                    </td>
-                                                    <td><span class="status-p bg-warning">panding</span></td>
-                                                    <td>
-                                                        <ul class="d-flex justify-content-center">
-                                                            <li class="mr-3"><a href="#" class="text-secondary"><i class="fa fa-edit"></i></a></li>
-                                                            <li><a href="#" class="text-danger"><i class="ti-trash"></i></a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
+                                                <% @catalog.each do |item| %>
+                                                    <tr>
+                                                        <th scope="row"><%= item[:id].first(5) %></th>
+                                                        <td><%= item[:item_data][:name] %></td>
+                                                        <td><%= item[:item_data][:description].first(10) %></td>
+                                                        <td><%= item[:item_data][:variations].length %></td>
+                                                        <td>$<%= item[:item_data][:variations][0][:item_variation_data][:price_money][:amount] %></td>
+                                                        <td><%= item[:created_at] %></td>
+                                                        <td>
+                                                            <ul class="d-flex justify-content-center">
+                                                                <li class="mr-3"><a href="#" class=""></a></li>
+                                                                <li>
+                                                                    <%= link_to admin_product_path(item[:id]), class: "btn btn-link text-secondary" do %>
+                                                                       <i class="fa fa-edit"></i>
+                                                                    <% end %>
+                                                                </li>
+                                                                <li>
+                                                                    <%= button_to admin_product_path(item[:id]), method: :delete, class: "btn btn-link text-danger" do %>
+                                                                        <i class="ti-trash"></i>
+                                                                    <% end %>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                <% end %>
                                             </tbody>
                                         </table>
                                     </div>
