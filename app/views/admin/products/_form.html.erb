@@ -15,5 +15,5 @@
     <%= form.label :price, for: "InputDescription" %>
     <%= form.number_field :price_amount, class: "form-control", id: "example-number-input", value: "42" %>
   </div>
-  <%= form.submit "Create New Product", class: "btn btn-primary mt-4 pr-4 pl-4" %>
+  <%= form.submit(current_page?(new_admin_product_path) ? "Create New Product" : " Edit Product", class: "btn btn-primary mt-4 pr-4 pl-4") %>
 <% end %>
