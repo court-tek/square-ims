@@ -125,6 +125,7 @@ class Admin::ProductsController < ApplicationController
             end
         end
 
+        # deletes a single object
         def delete_catalog_object(object_id)
             client = self.get_square_client
             result = client.catalog.delete_catalog_object(

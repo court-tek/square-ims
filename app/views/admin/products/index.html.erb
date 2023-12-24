@@ -44,7 +44,7 @@
                                                         <td><%= item[:item_data][:description].first(10) %></td>
                                                         <td><%= item[:item_data][:variations].length %></td>
                                                         <td>$<%= item[:item_data][:variations][0][:item_variation_data][:price_money][:amount] %></td>
-                                                        <td><%= item[:created_at] %></td>
+                                                        <td><%= item[:created_at].first(10) %></td>
                                                         <td>
                                                             <ul class="d-flex justify-content-center">
                                                                 <li class="mr-3"><a href="#" class=""></a></li>
