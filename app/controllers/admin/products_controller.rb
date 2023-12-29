@@ -35,10 +35,10 @@ class Admin::ProductsController < ApplicationController
     end
 
     def update 
-        @catalog = update_catalog_objects(params[:idempotency_key], params[:id], params[:name], params[:description], params[:price_amount].to_i)
+        @catalog = update_catalog_objects(params[:idempotency_key].to_s, params[:price_amount].to_i)
         respond_to do |format|
             if @catalog
-                format.html { redirect_to admin_menu_items_path, notice: "Menu item was successfully updated." }
+                format.html { redirect_to admin_products_path, notice: "Menu item was successfully updated." }
             else
                 format.html { render :edit, status: :unprocessable_entity }
             end
@@ -140,51 +140,52 @@ class Admin::ProductsController < ApplicationController
         end
 
         # 
-        def update_catalog_objects(idempotency_key, id, name, description, price_amount)
+        def update_catalog_objects(idempotency_key, price_amount)
             client = self.get_square_client
             result = client.catalog.upsert_catalog_object(
                 body: {
                     idempotency_key: idempotency_key,
                     object: {
-                    id: "##{id}",
-                    item_data: {
-                        name: name,
-                        description: description,
-                        variations: [
-                        {
-                            type: "ITEM_VARIATION",
-                            id: "#small_coffee",
-                            item_variation_data: {
-                            item_id: "##{id}",
-                            name: "Small",
-                            pricing_type: "FIXED_PRICING",
-                            price_money: {
-                                    amount: price_amount,
-                                    currency: "USD"
+                        type: "ITEM",
+                        id: "#shoe",
+                        item_data: {
+                            name: "Jordan IV",
+                            description: "Coffee Drink",
+                            variations: [
+                                {
+                                    type: "ITEM_VARIATION",
+                                    id: "#small_coffee",
+                                    item_variation_data: {
+                                    item_id: "#shoe",
+                                    name: "Small",
+                                    pricing_type: "FIXED_PRICING",
+                                    price_money: {
+                                            amount: price_amount,
+                                            currency: "USD"
+                                        }
+                                    }
+                                },
+                                {
+                                    type: "ITEM_VARIATION",
+                                    id: "#large_coffee",
+                                    item_variation_data: {
+                                    item_id: "#shoe",
+                                    name: "Large",
+                                    pricing_type: "FIXED_PRICING",
+                                    price_money: {
+                                        amount: 350,
+                                        currency: "USD"
+                                        }
+                                    }
                                 }
-                            }
-                        },
-                        {
-                            type: "ITEM_VARIATION",
-                            id: "#large_coffee",
-                            item_variation_data: {
-                            item_id: "##{id}",
-                            name: "Large",
-                            pricing_type: "FIXED_PRICING",
-                            price_money: {
-                                amount: 350,
-                                currency: "USD"
-                              }
-                            }
-                          }
-                        ]
-                      }
+                            ]
+                        }
                     }
                   }
                 ) 
 
                 if result.success?
-                    puts result.data
+                    return result.data
                 elsif result.error?
                     warn result.errors
                 end

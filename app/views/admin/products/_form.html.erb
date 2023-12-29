@@ -3,19 +3,19 @@
   <%= form.hidden_field :idempotency_key, value: "7J3QJFT2KCFPPO7IZAJIWNBN" %>
   <div class="form-group">
     <%= form.label :id, for: "InputId" %>
-    <%= form.select :id, options_for_product_id, {}, { :class => 'custom-select', :value => "shoes"} %>
+    <%= form.select :id, options_for_product_id, {}, { :class => 'custom-select', :value => ""} %>
   </div>
   <div class="form-group">
     <%= form.label :name, for: "InputName" %>
-    <%= form.text_field :name, value: "hello", class: "form-control", id:"InputName", aria_describedby: "nameHelp", placeholder: "Enter Product Name" %>
+    <%= form.text_field :name, value: "", class: "form-control", id:"InputName", aria_describedby: "nameHelp", placeholder: "Enter Product Name" %>
   </div>
   <div class="form-group">
     <%= form.label :description, for: "InputDescription" %>
-    <%= form.text_field :description, value: "hello", class: "form-control", id:"InputDescription", aria_describedby: "descriptionHelp", placeholder: "Enter Product Description" %>
+    <%= form.text_field :description, value: "", class: "form-control", id:"InputDescription", aria_describedby: "descriptionHelp", placeholder: "Enter Product Description" %>
   </div>
   <div class="form-group">
     <%= form.label :price, for: "InputDescription" %>
-    <%= form.number_field :price_amount, value: 200, class: "form-control", id: "example-number-input" %>
+    <%= form.number_field :price_amount, value: "", class: "form-control", id: "example-number-input" %>
   </div>
   <%= form.submit(current_page?(new_admin_product_path) ? "Create New Product" : " Edit Product", class: "btn btn-primary mt-4 pr-4 pl-4") %>
 <% end %>
