@@ -117,7 +117,74 @@ class Admin::Catalog
               warn catalog.errors
             end
         end
-    end
+
+        def update (id, attributes)
+            catalog = API.catalog.upsert_catalog_object(
+              body: {
+                    idempotency_key: SecureRandom.uuid(),
+                    id: id,
+                    object: {
+                      type: "ITEM",
+                      version: 1704134044939,
+                    id: id,
+                    item_data: {
+                        name: "Yeezy Boost 2000",
+                        description: attributes["description"],
+                        abbreviation: "Co",
+                        variations: [
+                        {
+                            type: "ITEM_VARIATION",
+                            id: "#small_coffee",
+                            item_variation_data: {
+                            item_id: id,
+                            name: "Small",
+                            pricing_type: "FIXED_PRICING",
+                            price_money: {
+                                amount: 330,
+                                currency: "USD"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+            )
+
+            if catalog.success?
+              puts catalog.data
+            elsif catalog.error?
+              warn catalog.errors
+            end
+        end
+
+        def each
+          all.each { |catalog| yield catalog }
+        end
+      end
+
+          def update (attributes, return_response: false)
+            run_callbacks :update do
+              response = self.class.update id, attributes
+              return false if response.error?
+
+              self.attributes
+
+              self
+            end
+          end
+
+          def update!(attributes)
+            run_callbacks :update do 
+                
+                response = self.class.update id, attributes
+                raise response.errors.inspect if response.error?
+
+                self.attributes
+
+                self
+            end
+          end
 
           def save
             run_callbacks :save do 
@@ -163,19 +230,5 @@ class Admin::Catalog
         def persist!
             changes_applied
             @persisted = true
-        end
-
-        def update!(attributes)
-            run_callbacks :update do 
-                
-                response = self.class.update idempotency_key, attributes
-                raise response.errors.inspect if response.error?
-
-                self.attributes = response.data
-
-                return response if return_response
-
-                self
-            end
         end
 end

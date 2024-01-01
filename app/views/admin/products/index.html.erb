@@ -44,7 +44,7 @@
                                                         <%= item[:item_data][:name] %>
                                                     </td>
                                                     <td class="mv-icon">
-                                                        <%= item[:item_data][:description] %>
+                                                        <%= item[:item_data][:description].first(10) %>
                                                     </td>
                                                     <td class="mv-icon">
                                                         <%= item[:item_data][:variations].length %>
