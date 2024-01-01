@@ -10,12 +10,11 @@ class Admin::Catalog
     API = Square::Client.new( access_token: ENV.fetch('SQUARE_ACCESS_TOKEN'), environment: 'sandbox' )
 
     # fields
-    IMMUTABLE_FIELDS = %i[id object_id created_at updated_at].freeze
+    IMMUTABLE_FIELDS = %i[id created_at updated_at].freeze
     FIELDS = %i[name description amount idempotency_key].freeze
 
     # attributes
     attribute :id, :string
-    attribute :object_id, :string
     attribute :created_at, :datetime
     attribute :updated_at, :datetime
     attribute :amount, :integer
@@ -159,9 +158,9 @@ class Admin::Catalog
             end
         end
 
-        def delete(object_id)
+        def delete(id)
           catalog = API.catalog.delete_catalog_object(
-            object_id: object_id
+            object_id: id
           )
 
           if catalog.success?
