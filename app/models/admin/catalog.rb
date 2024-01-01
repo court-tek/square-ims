@@ -10,21 +10,54 @@ class Admin::Catalog
     API = Square::Client.new( access_token: ENV.fetch('SQUARE_ACCESS_TOKEN'), environment: 'sandbox' )
 
     # fields
-    IMMUTABLE_FIELDS = %i[idempotency_key created_at updated_at].freeze
-    FIELDS = %i[name description price_amount].freeze
+    IMMUTABLE_FIELDS = %i[id created_at updated_at].freeze
+    FIELDS = %i[name description amount idempotency_key].freeze
 
     # attributes
-    attribute :idempotency_key, :string
-    attribute :name, :string
-    attribute :description, :string
-    attribute :price_amount, :integer
+    attribute :id, :string
+    attribute :created_at, :datetime
+    attribute :updated_at, :datetime
+    attribute :amount, :integer
+
+    (FIELDS - %i[amount]).each do |field|
+      attribute field, :string, default: ''
+    end
     
     # stuff
     attr_accessor :persisted
 
+    # 
+    FIELDS.each do |field|
+      define_method "#{field}=" do |value|
+        public_send "#{field}_will_change!"
+        super(value)
+      end
+    end
+
+    attribute_method_suffix '?'
+
+    define_attribute_methods *FIELDS
+
+    def attribute?(attr)
+      public_send(attr).present?
+    end
+
     # callbacks
     define_model_callbacks :update, :save
 
+    after_save :persist!
+    after_update :persist!
+
+    def initialize(attributes = {})
+        super()
+
+        @persisted = false
+        assign_attributes(attributes) if attributes
+        yield self if block_given?
+
+        self
+    end
+    
     class << self 
         def find(idempotency_key)
             catalog = API.catalog.retrieve_catalog_object(
@@ -36,68 +69,58 @@ class Admin::Catalog
         end
         
         def all
-            cursor = nil
-            catalog = []
-
             loop do 
-                catalog_list = API.catalog.search_catalog_items(
-                    body: {
-                        cursor: cursor
-                      }
-                )
-                catalog += catalog_list.data.objects.map do |catalog|
-                    return catalog
-                end
-
-                return catalog unless cursor
+                catalog_list = API.catalog.list_catalog
+                  if catalog_list.success?
+                    return catalog_list.data.objects
+                  elsif catalog_list.error?
+                    warn catalog_list.errors
+                  end
             end
         end
 
         def create (attributes = OpenStruct.new)
             yield attributes if block_given?
-            API.catalog.upsert_catalog_object(
-                body: {
-                  idempotency_key: "",
-                  object: {
+            catalog = API.catalog.upsert_catalog_object(
+              body: {
+                    :idempotency_key => attributes["idempotency_key"],
+                    object: {
                     type: "ITEM",
-                    id: "#Cocoa",
+                    id: "#shoes",
                     item_data: {
-                      name: "",
-                      description: "Hot Chocolate",
-                      abbreviation: "Ch",
-                      variations: [
+                        :name => attributes["name"],
+                        :description => attributes["description"],
+                        abbreviation: "Co",
+                        variations: [
                         {
-                          type: "ITEM_VARIATION",
-                          id: "#Small",
-                          item_variation_data: {
-                            item_id: "#Cocoa",
+                            type: "ITEM_VARIATION",
+                            id: "#small_coffee",
+                            item_variation_data: {
+                            item_id: "#shoes",
                             name: "Small",
-                            pricing_type: "VARIABLE_PRICING"
-                          }
-                        },
-                        {
-                          type: "ITEM_VARIATION",
-                          id: "#Large",
-                          item_variation_data: {
-                            item_id: "#Cocoa",
-                            name: "Large",
                             pricing_type: "FIXED_PRICING",
                             price_money: {
-                              amount: nil,
-                              currency: "USD"
+                                :amount => attributes["amount"],
+                                currency: "USD"
+                            }
                             }
                           }
-                        }
-                      ]
+                        ]
+                      }
                     }
                   }
-                }
-              )
-              
-        end
+            )
 
-        def save
-            run_callbacks(:save) do 
+            if catalog.success?
+              puts catalog.data
+            elsif catalog.error?
+              warn catalog.errors
+            end
+        end
+    end
+
+          def save
+            run_callbacks :save do 
                 return false unless valid?
 
                 # update
@@ -111,19 +134,15 @@ class Admin::Catalog
 
                 #create
                 response = self.class.create changes.transform_values(&:last)
-                raise response.errors.inspect if response.error?
 
-                self.attributes = response
+                self.attributes
 
                 self
             end
-        end
+          end
         
         def save!
-            run_callbacks :save do 
-                validate!
-
-
+            run_callbacks(:save) do 
                 # update
                 return update changes.transform_values(&:last) if @persisted
 
@@ -146,18 +165,17 @@ class Admin::Catalog
             @persisted = true
         end
 
-        # def update!(attributes)
-        #     run_callbacks :update do 
+        def update!(attributes)
+            run_callbacks :update do 
                 
-        #         response = self.class.update idempotency_key, attributes
-        #         raise response.errors.inspect if response.error?
+                response = self.class.update idempotency_key, attributes
+                raise response.errors.inspect if response.error?
 
-        #         self.attributes = response.data
+                self.attributes = response.data
 
-        #         return response if return_response
+                return response if return_response
 
-        #         self
-        #     end
-        # end
-    end
+                self
+            end
+        end
 end

@@ -94,6 +94,11 @@ class Admin::ProductsController < ApplicationController
                   }
                 )
 
-                return result
+                if catalog.success?
+                    return catalog.data
+                elsif catalog.error?
+                    warn catalog.errors
+                end
+                  
         end
 end
