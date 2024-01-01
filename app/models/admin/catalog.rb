@@ -199,7 +199,7 @@ class Admin::Catalog
           end
 
           def delete
-            response = self.class.delete object_id
+            response = self.class.delete id
             raise response .errors.inpsect if response.error?
 
             @persisted = false
