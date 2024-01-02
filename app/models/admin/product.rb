@@ -11,15 +11,16 @@ class Admin::Product
 
   # fields
   IMMUTABLE_FIELDS = %i[id created_at updated_at].freeze
-  FIELDS = %i[name description amount].freeze
+  FIELDS = %i[name description amount version].freeze
 
   # attributes
   attribute :id, :string
   attribute :created_at, :datetime
   attribute :updated_at, :datetime
   attribute :amount, :integer
+  attribute :version, :integer
 
-  (FIELDS - %i[amount]).each do |field|
+  (FIELDS - %i[amount version]).each do |field|
     attribute field, :string, default: ''
   end
     
@@ -120,7 +121,7 @@ class Admin::Product
               id: id,
               object: {
                 type: "ITEM",
-                version: 1704134044939,
+                version: attributes["version"],
                 id: id,
                 item_data: {
                   name: "Yeezy Boost 2000",
@@ -135,7 +136,7 @@ class Admin::Product
                       name: "Small",
                       pricing_type: "FIXED_PRICING",
                       price_money: {
-                          amount: 330,
+                          amount: attributes["amount"],
                           currency: "USD"
                       }
                     }
