@@ -16,51 +16,6 @@
             </div>
             <!-- page title area end -->
             <div class="main-content-inner">
-                <!-- overview area end -->
-                <!-- market value area start -->
-                <div class="row mt-5 mb-5">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-sm-flex justify-content-between align-items-center">
-                                    <h4 class="header-title mb-0">Market Value And Trends</h4>
-                                    <select class="custome-select border-0 pr-3">
-                                        <option selected>Last 24 Hours</option>
-                                        <option value="0">01 July 2018</option>
-                                    </select>
-                                </div>
-
-                                <div class="market-status-table mt-4">
-                                    <div class="table-responsive">
-                                        <table class="dbkit-table">
-                                            <tr class="heading-td">
-                                                <td class="mv-icon">Name</td>
-                                                <td class="coin-name">Description</td>
-                                                <td class="buy">Styles</td>
-                                                <td class="sell">Price</td>
-                                            </tr>
-                                            <% @products.each do |item| %>
-                                                <tr>
-                                                    <td class="mv-icon">
-                                                        <%= item[:item_data][:name] %>
-                                                    </td>
-                                                    
-                                                    <td class="mv-icon">
-                                                        
-                                                    </td>
-                                                    <td class="mv-icon">
-                                                        $<%= item[:item_data][:variations][0][:item_variation_data][:price_money][:amount] %>
-                                                    </td>
-                                                </tr>
-                                            <% end %>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- market value area end -->
                 <!-- row area start -->
                 <div class="row">
                     <!-- Progress Table start -->
@@ -78,6 +33,7 @@
                                                     <th scope="col">Description</th>
                                                     <th scope="col">Styles</th>
                                                     <th scope="col">Price</th>
+                                                    <th scope="col">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -87,10 +43,13 @@
                                                         <td>
                                                             <%= item[:item_data][:name] %>
                                                         </td>
-                                                        <td class="mv-icon">
+                                                        <td>
                                                             <%= item[:item_data][:description].first(10) %>
                                                         </td>
                                                         <td><span class="status-p bg-primary"><%= item[:item_data][:variations].length %></span></td>
+                                                        <td>
+                                                            $<%= item[:item_data][:variations][0][:item_variation_data][:price_money][:amount] %>
+                                                        </td>
                                                         <td>
                                                             <ul class="d-flex justify-content-center">
                                                                 <li class="mr-3">
