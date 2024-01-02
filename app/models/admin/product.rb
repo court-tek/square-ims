@@ -1,4 +1,4 @@
-class Admin::Catalog 
+class Admin::Product 
   include ActiveModel::Attributes
   include ActiveModel::Dirty
   include ActiveModel::Serializers::JSON
@@ -7,11 +7,11 @@ class Admin::Catalog
   extend Enumerable
 
   # Api client
-  API = Square::Client.new( access_token: ENV.fetch('SQUARE_ACCESS_TOKEN'), environment: 'sandbox' )
+  API = Square::Client.new(access_token: ENV.fetch('SQUARE_ACCESS_TOKEN'), environment: 'sandbox')
 
   # fields
   IMMUTABLE_FIELDS = %i[id created_at updated_at].freeze
-  FIELDS = %i[name description amount idempotency_key].freeze
+  FIELDS = %i[name description amount].freeze
 
   # attributes
   attribute :id, :string
@@ -83,7 +83,7 @@ class Admin::Catalog
       yield attributes if block_given?
       catalog = API.catalog.upsert_catalog_object(
         body: {
-              :idempotency_key => attributes["idempotency_key"],
+              :idempotency_key => SecureRandom.uuid(),
               object: {
               type: "ITEM",
               id: "#shoes",
@@ -100,7 +100,7 @@ class Admin::Catalog
                     name: "Small",
                     pricing_type: "FIXED_PRICING",
                     price_money: {
-                      :amount => attributes["amount"],
+                      :amount => attributes["amount"].to_i,
                       currency: "USD"
                     }
                   }
@@ -111,11 +111,6 @@ class Admin::Catalog
         }
       )
 
-        if catalog.success?
-          puts catalog.data
-        elsif catalog.error?
-          warn catalog.errors
-        end
     end
 
     def update (id, attributes)
@@ -126,8 +121,8 @@ class Admin::Catalog
               object: {
                 type: "ITEM",
                 version: 1704134044939,
-              id: id,
-              item_data: {
+                id: id,
+                item_data: {
                   name: "Yeezy Boost 2000",
                   description: attributes["description"],
                   abbreviation: "Co",
