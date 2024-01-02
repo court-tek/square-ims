@@ -18,7 +18,7 @@ class Admin::ProductsController < ApplicationController
 
     # GET the edit product view
     def edit
-        @product = Admin::Catalog.find params[:id]
+        @product = Admin::Product.find params[:id]
     end
     
     # POST add a product to the catalog
