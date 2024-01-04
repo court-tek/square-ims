@@ -10,8 +10,8 @@ class Admin::Product
   API = Square::Client.new(access_token: ENV.fetch('SQUARE_ACCESS_TOKEN'), environment: 'sandbox')
 
   # fields
-  IMMUTABLE_FIELDS = %i[id created_at updated_at].freeze
-  FIELDS = %i[name description amount version].freeze
+  IMMUTABLE_FIELDS = %i[created_at updated_at].freeze
+  FIELDS = %i[id version name description amount].freeze
 
   # attributes
   attribute :id, :string
@@ -60,11 +60,11 @@ class Admin::Product
   end
     
   class << self 
-    def find(idempotency_key)
+    def find(id)
       catalog = API.catalog.retrieve_catalog_object(
-          object_id: idempotency_key
+          object_id: id
       )
-      raise KeyError, "no catalog found for idempotency key `#{idempotency_key}`" unless catalog.success?
+      raise KeyError, "no catalog found for idempotency key `#{id}`" unless catalog.success?
 
       return catalog.data.object
     end
@@ -114,29 +114,29 @@ class Admin::Product
 
     end
 
-    def update (id, attributes)
-      catalog = API.catalog.upsert_catalog_object(
+    def update (id, version, name, description, amount)
+      API.catalog.upsert_catalog_object(
         body: {
-              idempotency_key: SecureRandom.uuid(),
+              :idempotency_key => SecureRandom.uuid(),
               id: id,
               object: {
                 type: "ITEM",
-                version: attributes["version"],
-                id: id,
+                version: version,
+                id: "#shoes",
                 item_data: {
-                  name: "Yeezy Boost 2000",
-                  description: attributes["description"],
+                  name: name,
+                  description: description,
                   abbreviation: "Co",
                   variations: [
                   {
                       type: "ITEM_VARIATION",
                       id: "#small_coffee",
                       item_variation_data: {
-                      item_id: id,
+                      :item_id => "#shoes",
                       name: "Small",
                       pricing_type: "FIXED_PRICING",
                       price_money: {
-                          amount: attributes["amount"],
+                          amount: amount,
                           currency: "USD"
                       }
                     }
@@ -145,13 +145,7 @@ class Admin::Product
               }
             }
           }
-        )
-
-      if catalog.success?
-        puts catalog.data
-      elsif catalog.error?
-        warn catalog.errors
-      end
+        ).data
     end
 
     def delete(id)
@@ -171,12 +165,14 @@ class Admin::Product
     end
   end
 
-  def update (attributes, return_response: false)
+  def update (id, version, name, description, amount, return_response: false)
     run_callbacks :update do
-      response = self.class.update id, attributes
+      response = self.class.update id, version, name, description, amount
       return false if response.error?
 
-      self.attributes
+      self.attributes response.data
+
+      return response if return_response
 
       self
     end
@@ -187,7 +183,9 @@ class Admin::Product
       response = self.class.update id, attributes
       raise response.errors.inspect if response.error?
 
-      self.attributes
+      self.attributes response.data
+
+      return response if return_response
 
       self
     end
@@ -247,5 +245,31 @@ class Admin::Product
   def persist!
     changes_applied
     @persisted = true
+  end
+
+  def pretty_print(pp)
+    pp.object_address_group self do
+      pp.breakable
+
+      attributes.symbolize_keys.slice(*self.class::IMMUTABLE_FIELDS).each do |field, value|
+        pp.text "#{field}: #{value.inspect}"
+        pp.comma_breakable
+      end
+      
+      *head, tail = attributes.symbolize_keys.slice(*self.class::FIELDS).to_a
+      
+      head.each do |field, value|
+        pp.text "#{field}=#{value.inspect}"
+        pp.comma_breakable
+      end
+
+      pp.text "#{tail.first}=#{tail.last.inspect}"
+    end
+  end
+
+  def inspect
+    attrs = attributes.map { |field, value| "#{field}: #{value.inspect}" }.join(', ')
+
+    "#<#{self.class}:#{format '%#018x', object_id << 1} #{attrs}>"
   end
 end

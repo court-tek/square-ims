@@ -38,12 +38,12 @@ class Admin::ProductsController < ApplicationController
 
     # POST update method
     def update
-        @product = Admin::Catalog.find params[:id]
-        response = @product.update catalog_params, return_response: true
+        @product = Admin::Product.find params[:id]
+        response = @product.update catalog_params
 
         respond_to do |format|
             if response.success?
-                format.html { redirect_to admin_products_path, notice: "Product was successfully created." }
+                format.html { redirect_to admin_products_path, notice: "Product was successfully updated." }
                 #format.json { render :show, status: :created, location: @payment }
             else
                 format.html { render :new, status: :unprocessable_entity }
@@ -54,7 +54,7 @@ class Admin::ProductsController < ApplicationController
 
     # DELETE
     def destroy
-        response = Admin::Catalog.delete params[:id]
+        response = Admin::Product.delete params[:id]
 
         respond_to do |format|
             format.html { redirect_to admin_products_path, notice: "Product was successfully created." }
