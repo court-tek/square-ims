@@ -42,7 +42,7 @@ class Admin::ProductsController < ApplicationController
         response = @product.update catalog_params
 
         respond_to do |format|
-            if response.success?
+            if response
                 format.html { redirect_to admin_products_path, notice: "Product was successfully updated." }
                 #format.json { render :show, status: :created, location: @payment }
             else
@@ -63,6 +63,11 @@ class Admin::ProductsController < ApplicationController
     end
 
     private
+       # Use callbacks to share common setup or constraints between actions.
+        def set_product
+            @product_id = Page.find(params[:id])
+        end
+
         def catalog_params
            params.require(:product).permit(Admin::Product::FIELDS) 
         end

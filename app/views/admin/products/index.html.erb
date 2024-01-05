@@ -39,7 +39,7 @@
                                             <tbody>
                                                 <% @products.each do |item| %>
                                                     <tr>
-                                                        <th scope="row"><%= item[:id].first(4) %></th>
+                                                        <th scope="row"><%= item[:id] %></th>
                                                         <td>
                                                             <%= item[:item_data][:name] %>
                                                         </td>
@@ -53,14 +53,14 @@
                                                         <td>
                                                             <ul class="d-flex justify-content-center">
                                                                 <li class="mr-3">
-                                                                    <%= link_to edit_admin_product_path(item[:id]), class: "text-secondary" do %>
+                                                                    <%= link_to edit_admin_product_path(item[:id]), class: "btn btn-link" do %>
                                                                         <i class="fa fa-edit"></i>
                                                                     <% end %>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="#" class="text-danger">
+                                                                    <%= button_to admin_product_path(item[:id]), class: "btn btn-link", method: :delete  do %>
                                                                         <i class="ti-trash"></i>
-                                                                    </a>
+                                                                    <% end %>
                                                                 </li>
                                                             </ul>
                                                         </td>

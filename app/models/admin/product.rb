@@ -14,7 +14,6 @@ class Admin::Product
   FIELDS = %i[id version name description amount].freeze
 
   # attributes
-  attribute :id, :string
   attribute :created_at, :datetime
   attribute :updated_at, :datetime
   attribute :amount, :integer
@@ -80,7 +79,7 @@ class Admin::Product
       end
     end
 
-    def create (attributes = OpenStruct.new)
+    def create(attributes = OpenStruct.new)
       yield attributes if block_given?
       catalog = API.catalog.upsert_catalog_object(
         body: {
@@ -112,20 +111,28 @@ class Admin::Product
         }
       )
 
+      if catalog.success?
+        puts catalog.data
+      elsif catalog.error?
+        warn catalog.errors
+      end
+
     end
 
-    def update (id, version, name, description, amount)
-      API.catalog.upsert_catalog_object(
+    def update(id, attributes)
+      yield attributes if block_given?
+      catalog = API.catalog.upsert_catalog_object(
+        id: id,
         body: {
-              :idempotency_key => SecureRandom.uuid(),
-              id: id,
+              idempotency_key: SecureRandom.uuid(),
+              id: attributes["id"],
               object: {
                 type: "ITEM",
-                version: version,
+                version: attributes["version"].to_i,
                 id: "#shoes",
                 item_data: {
-                  name: name,
-                  description: description,
+                  name: attributes["name"],
+                  description: attributes["description"],
                   abbreviation: "Co",
                   variations: [
                   {
@@ -136,7 +143,7 @@ class Admin::Product
                       name: "Small",
                       pricing_type: "FIXED_PRICING",
                       price_money: {
-                          amount: amount,
+                          amount: attributes["amount"].to_i,
                           currency: "USD"
                       }
                     }
@@ -145,7 +152,13 @@ class Admin::Product
               }
             }
           }
-        ).data
+        )
+
+        if catalog.success?
+          puts catalog.data.option
+        elsif catalog.error?
+          warn catalog.errors
+        end
     end
 
     def delete(id)
@@ -165,9 +178,9 @@ class Admin::Product
     end
   end
 
-  def update (id, version, name, description, amount, return_response: false)
+  def update (attributes, return_response: false)
     run_callbacks :update do
-      response = self.class.update id, version, name, description, amount
+      response = self.class.update attributes
       return false if response.error?
 
       self.attributes response.data
@@ -184,14 +197,14 @@ class Admin::Product
       raise response.errors.inspect if response.error?
 
       self.attributes response.data
-
+      puts response
       return response if return_response
 
       self
     end
   end
 
-  def delete
+  def delete(id)
     response = self.class.delete id
     raise response .errors.inpsect if response.error?
 
@@ -217,7 +230,7 @@ class Admin::Product
       #create
       response = self.class.create changes.transform_values(&:last)
 
-      self.attributes
+      self.attributes = response.data
 
       self
     end
