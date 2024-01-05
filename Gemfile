@@ -69,3 +69,5 @@ end
 gem 'square.rb'
 
 gem 'dotenv-rails'
+
+gem 'activeresource'
