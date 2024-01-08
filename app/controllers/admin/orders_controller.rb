@@ -4,7 +4,7 @@ class Admin::OrdersController < ApplicationController
 
     # GET all catalog objects from api
     def index
-        # @products = Admin::Product.all
+        # @products = Admin::Product.all 
     end
 
     # GET retrieves a single object from the api
@@ -31,19 +31,19 @@ class Admin::OrdersController < ApplicationController
     # end
 
     # # POST add a product to the catalog
-    # def create
-    #     response = Admin::Product.create catalog_params
+    def create
+        response = Admin::Order.create catalog_params
 
-    #     respond_to do |format|
-    #         if response.success?
-    #             format.html { redirect_to admin_products_path, notice: "Product was successfully created." }
-    #             #format.json { render :show, status: :created, location: @payment }
-    #         else
-    #             format.html { render :new, status: :unprocessable_entity }
-    #             #format.json { render json: @payment.errors, status: :unprocessable_entity }
-    #         end
-    #     end
-    # end
+        respond_to do |format|
+            if response.success?
+                format.html { redirect_to admin_products_path, notice: "Product was successfully created." }
+                #format.json { render :show, status: :created, location: @payment }
+            else
+                format.html { render :new, status: :unprocessable_entity }
+                #format.json { render json: @payment.errors, status: :unprocessable_entity }
+            end
+        end
+    end
 
     # # POST update method
     # def update
@@ -77,7 +77,7 @@ class Admin::OrdersController < ApplicationController
     #         @product_id = Page.find(params[:id])
     #     end
 
-    #     def catalog_params
-    #     params.require(:product).permit(Admin::Product::FIELDS) 
-    #     end
+        def order_params
+        params.require(:product).permit(Admin::Product::FIELDS) 
+        end
 end

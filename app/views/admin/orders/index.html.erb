@@ -1,0 +1,79 @@
+
+             <!-- page title area start -->
+            <div class="d-none d-lg-block page-title-area">
+                <div class="row align-items-center">
+                    <div class="col-sm-6">
+                        <div class="breadcrumbs-area clearfix">
+                            <h4 class="page-title pull-left">All Products</h4>
+                            <ul class="breadcrumbs pull-left">
+                                <li><%= link_to "Dashboard", admin_dashboard_index_path %></li>
+                                <li><span>All Products</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <%= render "shared/admin-userprofile" %>
+                </div>
+            </div>
+            <!-- page title area end -->
+            <div class="main-content-inner">
+                <!-- row area start -->
+                <div class="row">
+                    <!-- Progress Table start -->
+                    <div class="col-12 mt-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="header-title">Progress Table</h4>
+                                <div class="single-table">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover progress-table text-center">
+                                            <thead class="text-uppercase">
+                                                <tr>
+                                                    <th scope="col">ID</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Styles</th>
+                                                    <th scope="col">Price</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% @products.each do |item| %>
+                                                    <tr>
+                                                        <th scope="row"><%= item[:id] %></th>
+                                                        <td>
+                                                            <%= item[:item_data][:name] %>
+                                                        </td>
+                                                        <td>
+                                                            <%= item[:item_data][:description].first(10) %>
+                                                        </td>
+                                                        <td><span class="status-p bg-primary"><%= item[:item_data][:variations].length %></span></td>
+                                                        <td>
+                                                            $<%= item[:item_data][:variations][0][:item_variation_data][:price_money][:amount] %>
+                                                        </td>
+                                                        <td>
+                                                            <ul class="d-flex justify-content-center">
+                                                                <li class="mr-3">
+                                                                    <%= link_to edit_admin_product_path(item[:id]), class: "btn btn-link" do %>
+                                                                        <i class="fa fa-edit"></i>
+                                                                    <% end %>
+                                                                </li>
+                                                                <li>
+                                                                    <%= button_to admin_product_path(item[:id]), class: "btn btn-link", method: :delete  do %>
+                                                                        <i class="ti-trash"></i>
+                                                                    <% end %>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                <% end %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Progress Table end -->
+
+                </div>
+            </div>
