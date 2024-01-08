@@ -4,7 +4,7 @@ class Admin::OrdersController < ApplicationController
 
     # GET all catalog objects from api
     def index
-        # @products = Admin::Product.all 
+        # @orders = Admin::Product.all 
     end
 
     # GET retrieves a single object from the api
@@ -32,7 +32,7 @@ class Admin::OrdersController < ApplicationController
 
     # # POST add a product to the catalog
     def create
-        response = Admin::Order.create catalog_params
+        response = Admin::Order.create orders_params
 
         respond_to do |format|
             if response.success?
@@ -71,13 +71,13 @@ class Admin::OrdersController < ApplicationController
     #     end
     # end
 
-    # private
+    private
     # # Use callbacks to share common setup or constraints between actions.
     #     def set_product
     #         @product_id = Page.find(params[:id])
     #     end
 
         def order_params
-        params.require(:product).permit(Admin::Product::FIELDS) 
+            params.require(:order).permit(Admin::Product::FIELDS) 
         end
 end
