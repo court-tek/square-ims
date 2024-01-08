@@ -4,10 +4,10 @@
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="breadcrumbs-area clearfix">
-                            <h4 class="page-title pull-left">All Products</h4>
+                            <h4 class="page-title pull-left">Search All Orders</h4>
                             <ul class="breadcrumbs pull-left">
                                 <li><%= link_to "Dashboard", admin_dashboard_index_path %></li>
-                                <li><span>All Products</span></li>
+                                <li><span>Search Orders</span></li>
                             </ul>
                         </div>
                     </div>
@@ -18,7 +18,30 @@
             <div class="main-content-inner">
                 <!-- row area start -->
                 <div class="row">
-                    <!-- Progress Table start -->
+                    <!-- button with dropdown start -->
+                    <div class="col-12 mt-5">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title">Order Search</h4>
+                                        <form action="#">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Action</a>
+                                                        <a class="dropdown-item" href="#">Another action</a>
+                                                        <a class="dropdown-item" href="#">Something else here</a>
+                                                        <div role="separator" class="dropdown-divider"></div>
+                                                        <a class="dropdown-item" href="#">Separated link</a>
+                                                    </div>
+                                                </div>
+                                                <input type="text" class="form-control" aria-label="Text input with dropdown button">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                    </div>
+                    <!-- button with dropdown end -->
                     <div class="col-12 mt-5">
                         <div class="card">
                             <div class="card-body">
@@ -37,35 +60,23 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <% @products.each do |item| %>
+                                                <%
+=begin%>
+ <% @orders.each do |order| %> 
+<%
+=end%>
                                                     <tr>
-                                                        <th scope="row"><%= item[:id] %></th>
+                                                        <th scope="row">1</th>
                                                         <td>
-                                                            <%= item[:item_data][:name] %>
                                                         </td>
-                                                        <td>
-                                                            <%= item[:item_data][:description].first(10) %>
-                                                        </td>
-                                                        <td><span class="status-p bg-primary"><%= item[:item_data][:variations].length %></span></td>
-                                                        <td>
-                                                            $<%= item[:item_data][:variations][0][:item_variation_data][:price_money][:amount] %>
-                                                        </td>
-                                                        <td>
-                                                            <ul class="d-flex justify-content-center">
-                                                                <li class="mr-3">
-                                                                    <%= link_to edit_admin_product_path(item[:id]), class: "btn btn-link" do %>
-                                                                        <i class="fa fa-edit"></i>
-                                                                    <% end %>
-                                                                </li>
-                                                                <li>
-                                                                    <%= button_to admin_product_path(item[:id]), class: "btn btn-link", method: :delete  do %>
-                                                                        <i class="ti-trash"></i>
-                                                                    <% end %>
-                                                                </li>
-                                                            </ul>
+                                                            hello
                                                         </td>
                                                     </tr>
-                                                <% end %>
+                                                <%
+=begin%>
+ <% end %> 
+<%
+=end%>
                                             </tbody>
                                         </table>
                                     </div>

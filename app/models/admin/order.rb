@@ -68,8 +68,35 @@ class Admin::Order
     end
       
     def all
+      cursor = nil
+
       loop do 
-        catalog_list = API.catalog.list_catalog
+        order_list = API.orders.search_orders(
+          body: {
+            location_ids: [
+              "{LOCATION_ID}"
+            ],
+            query: {
+              filter: {
+                state_filter: {
+                  states: [
+                    "COMPLETED"
+                  ]
+                },
+                customer_filter: {
+                  customer_ids: [
+                    
+                  ]
+                },
+                fulfillment_filter: {
+                  fulfillment_types: [
+
+                  ]
+                }
+              }
+            }
+          } 
+        )
         if catalog_list.success?
           return catalog_list.data.objects
         elsif catalog_list.error?
@@ -80,7 +107,7 @@ class Admin::Order
 
     def create(attributes = OpenStruct.new)
       yield attributes if block_given?
-      location_id = API.locations.list_locations.data.locations.first.fetch(:id)
+      location_id = API.locations.list_locations.data.locations.last.fetch(:id)
       result = API.orders.create_order(
         body: {
           order: {
