@@ -16,32 +16,8 @@
             </div>
             <!-- page title area end -->
             <div class="main-content-inner">
-                <!-- row area start -->
                 <div class="row">
-                    <!-- button with dropdown start -->
-                    <div class="col-12 mt-5">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="header-title">Order Search</h4>
-                                        <form action="#">
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Action</a>
-                                                        <a class="dropdown-item" href="#">Another action</a>
-                                                        <a class="dropdown-item" href="#">Something else here</a>
-                                                        <div role="separator" class="dropdown-divider"></div>
-                                                        <a class="dropdown-item" href="#">Separated link</a>
-                                                    </div>
-                                                </div>
-                                                <input type="text" class="form-control" aria-label="Text input with dropdown button">
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                    </div>
-                    <!-- button with dropdown end -->
+                    <!-- Progress Table start -->
                     <div class="col-12 mt-5">
                         <div class="card">
                             <div class="card-body">
@@ -52,31 +28,37 @@
                                             <thead class="text-uppercase">
                                                 <tr>
                                                     <th scope="col">ID</th>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Quantity</th>
+                                                    <th scope="col">item name</th>
                                                     <th scope="col">Styles</th>
                                                     <th scope="col">Price</th>
                                                     <th scope="col">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <%
-=begin%>
- <% @orders.each do |order| %> 
-<%
-=end%>
+                                                <% @orders.each do |item| %>
                                                     <tr>
-                                                        <th scope="row">1</th>
+                                                        <th scope="row"><%= item[:id] %></th>
+                                                        <th><%= item[:line_items][0][:quantity] %></th>
+                                                        <th><%= item[:line_items][0][:name] %></th>
+                                                        <th>Hello</th>
+                                                        <th>Hello</th>
                                                         <td>
-                                                        </td>
-                                                            hello
+                                                            <ul class="d-flex justify-content-center">
+                                                                <li class="mr-3">
+                                                                    <%= link_to edit_admin_product_path(item[:id]), class: "btn btn-link" do %>
+                                                                        <i class="fa fa-edit"></i>
+                                                                    <% end %>
+                                                                </li>
+                                                                <li>
+                                                                    <%= button_to admin_product_path(item[:id]), class: "btn btn-link", method: :delete  do %>
+                                                                        <i class="ti-trash"></i>
+                                                                    <% end %>
+                                                                </li>
+                                                            </ul>
                                                         </td>
                                                     </tr>
-                                                <%
-=begin%>
- <% end %> 
-<%
-=end%>
+                                                <% end %>
                                             </tbody>
                                         </table>
                                     </div>
@@ -85,6 +67,5 @@
                         </div>
                     </div>
                     <!-- Progress Table end -->
-
                 </div>
             </div>

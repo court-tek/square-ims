@@ -11,7 +11,7 @@ class Admin::Order
 
     # Fields
     IMMUTABLE_FIELDS = %i[created_at updated_at].freeze
-    FIELDS = %i[name quantity amount].freeze
+    FIELDS = %i[name quantity amount state].freeze
 
     # attributes
     attribute :created_at, :datetime
@@ -64,50 +64,35 @@ class Admin::Order
       )
       raise KeyError, "no catalog found for idempotency key `#{id}`" unless catalog.success?
 
-      return catalog.data.object
+      new catalog.data.object
     end
       
     def all
       cursor = nil
+      # orders = []
+      location_id = API.locations.list_locations.data.locations.first.fetch(:id)
 
-      loop do 
-        order_list = API.orders.search_orders(
-          body: {
-            location_ids: [
-              "{LOCATION_ID}"
+      loop do
+      order_list = API.orders.search_orders(
+        body: {
+          location_ids: [
+              location_id
             ],
-            query: {
-              filter: {
-                state_filter: {
-                  states: [
-                    "COMPLETED"
-                  ]
-                },
-                customer_filter: {
-                  customer_ids: [
-                    
-                  ]
-                },
-                fulfillment_filter: {
-                  fulfillment_types: [
-
-                  ]
-                }
-              }
-            }
-          } 
+            cursor: cursor
+          }
         )
-        if catalog_list.success?
-          return catalog_list.data.objects
-        elsif catalog_list.error?
-          warn catalog_list.errors
+        if order_list.success?
+          puts order_list.data.orders
+          return order_list.data.orders
+        elsif order_list.error?
+          warn order_list.errors
         end
       end
     end
 
     def create(attributes = OpenStruct.new)
       yield attributes if block_given?
-      location_id = API.locations.list_locations.data.locations.last.fetch(:id)
+      location_id = API.locations.list_locations.data.locations.first.fetch(:id)
       result = API.orders.create_order(
         body: {
           order: {
@@ -119,15 +104,15 @@ class Admin::Order
                 modifiers: [
                   {
                     name: "Yeezy Boost 7",
-                    quantity: attributes["quantity"],
+                    quantity: "2",
                     base_price_money: {
-                      amount: attributes["amount"],
+                      amount: attributes["amount"].to_i,
                       currency: "USD"
                     }
                   }
                 ],
                 base_price_money: {
-                  amount: attributes["amount"],
+                  amount: attributes["amount"].to_i,
                   currency: "USD"
                 }
               }
@@ -137,11 +122,9 @@ class Admin::Order
         }
       )
 
-      if result.success?
-        puts result.data
-      elsif result.error?
-        warn result.errors
-      end  
+  
+      puts result.data
+     
     end
 
     def update(id, attributes)
@@ -255,7 +238,7 @@ class Admin::Order
       #create
       response = self.class.create changes.transform_values(&:last)
 
-      self.attributes = response
+      self.attributes = response.data
 
       self
     end

@@ -29,10 +29,15 @@
                             <li>
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="ti-pie-chart"></i><span>Orders</span></a>
                                 <ul class="collapse">
-                                    <li><a href="linechart.html">all orders</a></li>
-                                    <li><a href="piechart.html">search orders</a></li>
-                                    <li><a href="barchart.html">create order</a></li>
-                                    <li><a href="piechart.html">refunds and exchanges</a></li>
+                                    <li>
+                                        <%= link_to "search orders", admin_orders_path %>
+                                    </li>
+                                    <li>
+                                        <%= link_to "create orders", new_admin_order_path %>
+                                    </li>
+                                    <li>
+                                        <%= link_to "refunds and exchanges", new_admin_order_path %>
+                                    </li>
                                 </ul>
                             </li>
                             <li>

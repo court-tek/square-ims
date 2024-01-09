@@ -17,12 +17,13 @@
             <div class="main-content-inner">
                 <div class="col-lg-6 col-ml-12">
                     <div class="row">
+                        <%= notice %>
                         <!-- basic form start -->
                         <div class="col-12 mt-5">
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="header-title">Basic form</h4>
-                                        <%= render "form", product: @order %>
+                                        <%= render "form", order: @order %>
                                     </div>
                                 </div>
                         </div>
