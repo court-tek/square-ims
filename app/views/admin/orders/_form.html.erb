@@ -1,0 +1,15 @@
+<%= form_with scope: :order, url: admin_orders_path, method: :post do |form| %>
+  <div class="form-group">
+    <%= form.label :name, for: "InputName" %>
+    <%= form.text_field :name, class: "form-control", id:"InputName", aria_describedby: "nameHelp", value: "" %>
+  </div>
+  <div class="form-group">
+    <%= form.label :quantity, for: "InputName" %>
+    <%= form.text_field :quantity, class: "form-control", id:"InputName", aria_describedby: "nameHelp", value: "" %>
+  </div>
+  <div class="form-group">
+    <%= form.label :amount, for: "InputName" %>
+    <%= form.number_field :amount, class: "form-control", id:"InputName", aria_describedby: "nameHelp", value: "" %>
+  </div>
+  <%= form.submit "Create New Product", class: "btn btn-primary mt-4 pr-4 pl-4" %>
+<% end %>

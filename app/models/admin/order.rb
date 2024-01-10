@@ -1,32 +1,26 @@
-class Admin::Product 
-  include ActiveModel::Attributes
-  include ActiveModel::Dirty
-  include ActiveModel::Serializers::JSON
-  include ActiveModel::Model
+class Admin::Order
+    include ActiveModel::Attributes
+    include ActiveModel::Dirty
+    include ActiveModel::Serializers::JSON
+    include ActiveModel::Model
 
-  extend Enumerable
+    extend Enumerable
 
-  # Needed
-  require 'net/http'
-  require 'uri'
-  require 'json'
+    # Api client
+    API = Square::Client.new(access_token: ENV.fetch('SQUARE_ACCESS_TOKEN'), environment: 'sandbox')
 
-  # Api client
-  API = Square::Client.new(access_token: ENV.fetch('SQUARE_ACCESS_TOKEN'), environment: 'sandbox')
+    # Fields
+    IMMUTABLE_FIELDS = %i[created_at updated_at].freeze
+    FIELDS = %i[name quantity amount].freeze
 
-  # fields
-  IMMUTABLE_FIELDS = %i[created_at updated_at].freeze
-  FIELDS = %i[id version name description amount].freeze
+    # attributes
+    attribute :created_at, :datetime
+    attribute :updated_at, :datetime
+    attribute :amount, :integer
 
-  # attributes
-  attribute :created_at, :datetime
-  attribute :updated_at, :datetime
-  attribute :amount, :integer
-  attribute :version, :integer
-
-  (FIELDS - %i[amount version]).each do |field|
-    attribute field, :string, default: ''
-  end
+    (FIELDS - %i[amount]).each do |field|
+        attribute field, :string, default: ''
+    end
     
   # stuff
   attr_accessor :persisted
@@ -70,58 +64,67 @@ class Admin::Product
       )
       raise KeyError, "no catalog found for idempotency key `#{id}`" unless catalog.success?
 
-      return catalog.data.object
+      new catalog.data.object
     end
       
     def all
-      loop do 
-        catalog_list = API.catalog.list_catalog
-        if catalog_list.success?
-          return catalog_list.data.objects
-        elsif catalog_list.error?
-          warn catalog_list.errors
+      cursor = nil
+      # orders = []
+      location_id = API.locations.list_locations.data.locations.first.fetch(:id)
+
+      loop do
+      order_list = API.orders.search_orders(
+        body: {
+          location_ids: [
+              location_id
+            ],
+            cursor: cursor
+          }
+        )
+        if order_list.success?
+          puts order_list.data.orders
+          return order_list.data.orders
+        elsif order_list.error?
+          warn order_list.errors
         end
       end
     end
 
     def create(attributes = OpenStruct.new)
       yield attributes if block_given?
-      catalog = API.catalog.upsert_catalog_object(
+      location_id = API.locations.list_locations.data.locations.first.fetch(:id)
+      result = API.orders.create_order(
         body: {
-              :idempotency_key => SecureRandom.uuid(),
-              object: {
-              type: "ITEM",
-              id: "#shoes",
-              item_data: {
-                  :name => attributes["name"],
-                  :description => attributes["description"],
-                  abbreviation: "Co",
-                  variations: [
+          order: {
+            location_id: location_id,
+            line_items: [
+              {
+                name: attributes["name"],
+                quantity: attributes["quantity"],
+                modifiers: [
                   {
-                    type: "ITEM_VARIATION",
-                    id: "#small_coffee",
-                    item_variation_data: {
-                    item_id: "#shoes",
-                    name: "Small",
-                    pricing_type: "FIXED_PRICING",
-                    price_money: {
-                      :amount => attributes["amount"].to_i,
+                    name: "Yeezy Boost 7",
+                    quantity: "2",
+                    base_price_money: {
+                      amount: attributes["amount"].to_i,
                       currency: "USD"
                     }
                   }
+                ],
+                base_price_money: {
+                  amount: attributes["amount"].to_i,
+                  currency: "USD"
                 }
-              ]
-            }
-          }
+              }
+            ]
+          },
+          idempotency_key: SecureRandom.uuid()
         }
       )
 
-      if catalog.success?
-        puts catalog.data
-      elsif catalog.error?
-        warn catalog.errors
-      end
-
+  
+      puts result.data
+     
     end
 
     def update(id, attributes)
@@ -160,7 +163,7 @@ class Admin::Product
         )
 
         if catalog.success?
-          puts catalog.data.option
+          puts catalog.data
         elsif catalog.error?
           warn catalog.errors
         end

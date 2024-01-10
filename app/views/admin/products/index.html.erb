@@ -16,7 +16,6 @@
             </div>
             <!-- page title area end -->
             <div class="main-content-inner">
-                <!-- row area start -->
                 <div class="row">
                     <!-- Progress Table start -->
                     <div class="col-12 mt-5">
@@ -39,7 +38,7 @@
                                             <tbody>
                                                 <% @products.each do |item| %>
                                                     <tr>
-                                                        <th scope="row"><%= item[:id] %></th>
+                                                        <td scope="row"><%= item[:id] %></td>
                                                         <td>
                                                             <%= item[:item_data][:name] %>
                                                         </td>
@@ -74,6 +73,5 @@
                         </div>
                     </div>
                     <!-- Progress Table end -->
-
                 </div>
             </div>
