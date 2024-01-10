@@ -1,0 +1,3 @@
+class Admin::Customer
+    
+end

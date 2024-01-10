@@ -11,7 +11,7 @@ class Admin::Order
 
     # Fields
     IMMUTABLE_FIELDS = %i[created_at updated_at].freeze
-    FIELDS = %i[name quantity amount state].freeze
+    FIELDS = %i[name quantity amount].freeze
 
     # attributes
     attribute :created_at, :datetime

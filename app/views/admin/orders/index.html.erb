@@ -28,35 +28,18 @@
                                             <thead class="text-uppercase">
                                                 <tr>
                                                     <th scope="col">ID</th>
+                                                    <th scope="col">Name</th>
                                                     <th scope="col">Quantity</th>
-                                                    <th scope="col">item name</th>
-                                                    <th scope="col">Styles</th>
                                                     <th scope="col">Price</th>
-                                                    <th scope="col">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <% @orders.each do |item| %>
+                                                <% @orders.each do |order| %>
                                                     <tr>
-                                                        <th scope="row"><%= item[:id] %></th>
-                                                        <th><%= item[:line_items][0][:quantity] %></th>
-                                                        <th><%= item[:line_items][0][:name] %></th>
-                                                        <th>Hello</th>
-                                                        <th>Hello</th>
-                                                        <td>
-                                                            <ul class="d-flex justify-content-center">
-                                                                <li class="mr-3">
-                                                                    <%= link_to edit_admin_product_path(item[:id]), class: "btn btn-link" do %>
-                                                                        <i class="fa fa-edit"></i>
-                                                                    <% end %>
-                                                                </li>
-                                                                <li>
-                                                                    <%= button_to admin_product_path(item[:id]), class: "btn btn-link", method: :delete  do %>
-                                                                        <i class="ti-trash"></i>
-                                                                    <% end %>
-                                                                </li>
-                                                            </ul>
-                                                        </td>
+                                                        <td scope="row"><%= order[:id] %></td>
+                                                        <td><%= order[:line_items][0][:name] %></td>
+                                                        <td><%= order[:line_items][0][:quantity] %></td>
+                                                        <td><%= order[:line_items][0][:base_price_money][:amount] %></td>
                                                     </tr>
                                                 <% end %>
                                             </tbody>
