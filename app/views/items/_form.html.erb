@@ -1,6 +1,6 @@
-<%= form_with(model: item) do |form| %>
+<%= form_with scope: :item, url: items_path, method: :post, local: true do |form| %>
   
-
+  <%= form.text_field :id, value: @item[:id] %>
   <div>
     <%= form.submit %>
   </div>
