@@ -1,0 +1,9 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render "item", item: @item %>
+
+<div>
+  <%= link_to "Back to items", items_path %>
+
+  <%= button_to "Add To Cart", @item%>
+</div>
